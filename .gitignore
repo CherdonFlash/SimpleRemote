@@ -1,0 +1,27 @@
+# Keil generated files
+mcu/Objects/
+mcu/Listings/
+mcu/DebugConfig/
+mcu/*.uvguix.*
+
+# Mechanical preview images and generated script binaries
+hardware/mechanical/*.png
+scripts/**/*.exe
+scripts/**/*.dll
+scripts/**/*.pdb
+
+# Python, IDE and operating-system files
+__pycache__/
+*.py[cod]
+.vs/
+.vscode/
+*.user
+*.suo
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.bak
+*.tmp
+*.log
+~$*
