@@ -1,0 +1,8 @@
+* text=auto
+
+# SolidWorks and packaged design files are binary.
+*.SLDPRT binary
+*.SLDASM binary
+*.STL binary
+*.epro binary
+*.zip binary
