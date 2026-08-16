@@ -2,6 +2,37 @@
 
 SimpleRemote 是一套基于 STM32F103 的简易无线遥控器工程。遥控器采集摇杆、按键、拨动开关和电池电压，在 OLED 上显示当前状态，并通过 NRF24L01 将控制数据发送给接收端。
 
+## 功能架构
+
+```mermaid
+flowchart TB
+    subgraph IN["输入采集"]
+        J1["双轴摇杆 ×2<br/>ADC1 连续采集（PA2/PA3/PA4/PB0）"]
+        B1["电池电压<br/>ADC1 通道9（PB1）"]
+        K1["按键 ×4<br/>TIM2 中断扫描（PB12~PB15）"]
+        S1["拨动开关<br/>GPIO 读取（PA8）"]
+    end
+
+    subgraph MCU["STM32F103C6 主控<br/>裸机主循环 · 72 MHz"]
+        P1["数据采集 / 映射<br/>按键状态机 · 电池低通滤波与电量估算"]
+    end
+
+    subgraph OUT["输出"]
+        D1["0.96 寸 OLED 显示<br/>I2C1 + DMA（PB6/PB7）"]
+        R1["NRF24L01 无线发送<br/>SPI1 · 32 字节数据帧 → 接收端"]
+        U1["USART1 调试输出<br/>115200 · 8N1"]
+    end
+
+    J1 --> P1
+    B1 --> P1
+    K1 --> P1
+    S1 --> P1
+    P1 --> D1
+    P1 --> R1
+    P1 --> U1
+    P1 -. 周期喂狗 .-> W["独立看门狗 IWDG"]
+```
+
 ## 主要功能
 
 - 采集 4 路模拟摇杆或电位器输入。
