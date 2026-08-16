@@ -1,13 +1,13 @@
 #include "turn.h"
 
-//µ¥µ¶Ë«ÖÀ¿ª¹Ø ¶ÔÓ¦PA8 ÊäÈëÄ£Ê½
+//å•åˆ€åŒæ·å¼€å…³ å¯¹åº”PA8 è¾“å…¥æ¨¡å¼
 void turn_init(){
     GPIO_InitTypeDef GPIO_InitStructure;
 
-    // 1. Ê¹ÄÜ GPIOA Ê±ÖÓ
+    // 1. ä½¿èƒ½ GPIOA æ—¶é’Ÿ
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
 
-    // 2. ÅäÖÃ PA8 ÎªÊäÈë¸¡¿Õ
+    // 2. é…ç½® PA8 ä¸ºè¾“å…¥æµ®ç©º
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;   
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING; 

@@ -9,119 +9,119 @@
 #include "mobile.h"
 #include "nrf24.h"
 #include "bat.h"
-//**********ÆÕÍ¨Ò£¿ØÆ÷:×÷Õßqq:1228879785********ÒÑ¿ªÔ´ÖÁÁ¢´´ºÍGithub******************************
-//***********Á¢´´¿ªÔ´ÏîÄ¿µØÖ·:http://oshwhub.com/foryous/ordinary-remote-control-mbcontro*********
-//***********Github¿ªÔ´µØÖ·:https://github.com/mcforyous/MB_Control*******************************
-void oled_data(void);//ÆÁÄ»Ë¢ĞÂº¯Êı
-void IWDG_Init(uint16_t ms);//¿´ÃÅ¹·³õÊ¼»¯º¯Êı
+//**********æ™®é€šé¥æ§å™¨:ä½œè€…qq:1228879785********å·²å¼€æºè‡³ç«‹åˆ›å’ŒGithub******************************
+//***********ç«‹åˆ›å¼€æºé¡¹ç›®åœ°å€:http://oshwhub.com/foryous/ordinary-remote-control-mbcontro*********
+//***********Githubå¼€æºåœ°å€:https://github.com/mcforyous/MB_Control*******************************
+void oled_data(void);//å±å¹•åˆ·æ–°å‡½æ•°
+void IWDG_Init(uint16_t ms);//çœ‹é—¨ç‹—åˆå§‹åŒ–å‡½æ•°
 
 
-extern volatile uint16_t adc_values[5];//ADC²ÉÑùÊı×é£¨Ô­Ê¼Öµ£©
-extern float V_Bat;//µçÔ´µçÑ¹
+extern volatile uint16_t adc_values[5];//ADCé‡‡æ ·æ•°ç»„ï¼ˆåŸå§‹å€¼ï¼‰
+extern float V_Bat;//ç”µæºç”µå‹
 extern uint8_t BAT_Percent;
-extern uint16_t BAT_ADC;//µçÔ´ADCÔ­Ê¼Öµ
+extern uint16_t BAT_ADC;//ç”µæºADCåŸå§‹å€¼
 int main(void){
-    while(SystemClock_HSE_72MHz()==0);    //³õÊ¼»¯HSEÍâ²¿¾§Õñ8M
-	SysTick_Init();             // ³õÊ¼»¯1ms½ÚÅÄ¼ÆÊ± 
-    IWDG_Init(1000);            //³õÊ¼»¯¿´ÃÅ¹·1s³¬Ê±
-    USART1_Init(115200);	    //´®¿Ú1³õÊ¼»¯
-	Key_Init_All();		        //°´¼ü×Ü³õÊ¼»¯  °üÀ¨Òı½Å³õÊ¼»¯ °´¼ü¹¦ÄÜ ºÍ¶¨Ê±Æ÷ÅäÖÃ
-    turn_init();                //µ¥µ¶Ë«ÖÀ¿ª¹Ø
-    mobile_init();              //Ò¡¸ËADC²ÉÑù³õÊ¼»¯
-    I2C1_Init();			    //³õÊ¼»¯Ó²¼şIIC1 ±ØĞëÔÚOLEDÇ°
-	OLED_Init();			    //³õÊ¼»¯OLED Ê¹ÓÃÓ²¼şIIC1
-    nrf24_init();               //³õÊ¼»¯Òı½ÅºÍÓ²¼şSPI
-    UART1_Printf("Init success!\n");//¸Ãº¯ÊıÓëprintfÓÃ·¨ÏàÍ¬
+    while(SystemClock_HSE_72MHz()==0);    //åˆå§‹åŒ–HSEå¤–éƒ¨æ™¶æŒ¯8M
+	SysTick_Init();             // åˆå§‹åŒ–1msèŠ‚æ‹è®¡æ—¶ 
+    IWDG_Init(1000);            //åˆå§‹åŒ–çœ‹é—¨ç‹—1sè¶…æ—¶
+    USART1_Init(115200);	    //ä¸²å£1åˆå§‹åŒ–
+	Key_Init_All();		        //æŒ‰é”®æ€»åˆå§‹åŒ–  åŒ…æ‹¬å¼•è„šåˆå§‹åŒ– æŒ‰é”®åŠŸèƒ½ å’Œå®šæ—¶å™¨é…ç½®
+    turn_init();                //å•åˆ€åŒæ·å¼€å…³
+    mobile_init();              //æ‘‡æ†ADCé‡‡æ ·åˆå§‹åŒ–
+    I2C1_Init();			    //åˆå§‹åŒ–ç¡¬ä»¶IIC1 å¿…é¡»åœ¨OLEDå‰
+	OLED_Init();			    //åˆå§‹åŒ–OLED ä½¿ç”¨ç¡¬ä»¶IIC1
+    nrf24_init();               //åˆå§‹åŒ–å¼•è„šå’Œç¡¬ä»¶SPI
+    UART1_Printf("Init success!\n");//è¯¥å‡½æ•°ä¸printfç”¨æ³•ç›¸åŒ
 	while(1)
 	{   
-        oled_data();    //ÆÁÄ»Ë¢ĞÂ
-        BAT_Get();      //µçÔ´µçÑ¹½âÎö
-        NRF_SendAll();  //·¢ËÍÊı¾İ°ü
+        oled_data();    //å±å¹•åˆ·æ–°
+        BAT_Get();      //ç”µæºç”µå‹è§£æ
+        NRF_SendAll();  //å‘é€æ•°æ®åŒ…
         
-        IWDG_ReloadCounter(); // Î¹¹·
+        IWDG_ReloadCounter(); // å–‚ç‹—
 	}
 }
-//oledÏÔÊ¾°´¼ü Ò¡¸Ë nrf24µÈĞÅÏ¢µÄÆÁÄ»º¯Êı
+//oledæ˜¾ç¤ºæŒ‰é”® æ‘‡æ† nrf24ç­‰ä¿¡æ¯çš„å±å¹•å‡½æ•°
 extern int8_t mobile_1;
 extern int8_t mobile_2;
 extern int8_t mobile_3;
-extern int8_t mobile_4;//ÓÍÃÅ0-255
+extern int8_t mobile_4;//æ²¹é—¨0-255
 extern uint8_t i2c_dma_tx_done;
 void oled_data(){
-    if(i2c_dma_tx_done!=1) return;//ÉÏ´Î´«ÊäÎ´Íê³ÉÔòÌø¹ı±¾´Î
+    if(i2c_dma_tx_done!=1) return;//ä¸Šæ¬¡ä¼ è¾“æœªå®Œæˆåˆ™è·³è¿‡æœ¬æ¬¡
     
-    //ÏÔÊ¾ÓÒÉÏ½Çµ¥µ¶Ë«ÖÀ  ÉèÖÃÎªÍùÉÏêşÎªON ÍùÏÂÎªOFF
+    //æ˜¾ç¤ºå³ä¸Šè§’å•åˆ€åŒæ·  è®¾ç½®ä¸ºå¾€ä¸Šæ°ä¸ºON å¾€ä¸‹ä¸ºOFF
     if(turn_get()==0) OLED_ShowString(102,5,"ON ");
     else              OLED_ShowString(102,5,"OFF ");
     
-    //ÏÔÊ¾µçÁ¿
+    //æ˜¾ç¤ºç”µé‡
     OLED_ShowInt(50,5,(int)BAT_Percent);
     OLED_ShowString(68,5,"%");
 
     OLED_DrawCircle(21,25,20,0);
-    mobile_data();//»ñÈ¡Ò¡¸ËÓ³ÉäºóµÄÊı¾İ
-    //×óÒ¡¸Ë
+    mobile_data();//è·å–æ‘‡æ†æ˜ å°„åçš„æ•°æ®
+    //å·¦æ‘‡æ†
     float nx = (float)mobile_1 / 127.0f;
     float ny = (float)mobile_2 / 127.0f;
     float r = sqrtf(nx*nx + ny*ny);
     if (r > 1.0f) r = 1.0f;
     int length = r * 20.0f;
     int angle  = atan2f(-ny, nx) * 180.0f / 3.1415;
-    OLED_DrawRay(21,25,angle,length);//×óÒ¡¸ËÉäÏß
+    OLED_DrawRay(21,25,angle,length);//å·¦æ‘‡æ†å°„çº¿
     
-    //ÓÒÒ¡¸Ë
-    OLED_DrawRectangle(60,20,80,30,0);//×ó°ë
-    OLED_DrawRectangle(80+(mobile_3<0 ? mobile_3 : 0)*20/128,20,80,30,1);//×ó°ë
+    //å³æ‘‡æ†
+    OLED_DrawRectangle(60,20,80,30,0);//å·¦åŠ
+    OLED_DrawRectangle(80+(mobile_3<0 ? mobile_3 : 0)*20/128,20,80,30,1);//å·¦åŠ
     
-    OLED_DrawRectangle(90,20,110,30,0);//ÓÒ°ë
+    OLED_DrawRectangle(90,20,110,30,0);//å³åŠ
     OLED_DrawRectangle(90,20,90+(mobile_3>0 ? mobile_3 : 0)*20/128,30,1);
     
-// ÉÏ°ë²¿·Ö (¶ÔÓ¦ÏòÉÏÍÆÓÍÃÅ£¬¼ÙÉè´ËÊ±ÖµÎªÕı)
-    OLED_DrawRectangle(80, 5, 90, 25, 0); //ÉÏ°ëÍâ¿ò
-    // Ìî³äÉÏ°ë£ºÒòÎªÏòÉÏÍÆ Y ×ø±êÓ¦¸Ã¼õĞ¡£¬ËùÒÔÓÃ 25 ¼õÈ¥¼ÆËã³öµÄÆ«ÒÆÁ¿
+// ä¸ŠåŠéƒ¨åˆ† (å¯¹åº”å‘ä¸Šæ¨æ²¹é—¨ï¼Œå‡è®¾æ­¤æ—¶å€¼ä¸ºæ­£)
+    OLED_DrawRectangle(80, 5, 90, 25, 0); //ä¸ŠåŠå¤–æ¡†
+    // å¡«å……ä¸ŠåŠï¼šå› ä¸ºå‘ä¸Šæ¨ Y åæ ‡åº”è¯¥å‡å°ï¼Œæ‰€ä»¥ç”¨ 25 å‡å»è®¡ç®—å‡ºçš„åç§»é‡
     OLED_DrawRectangle(80, 25 - (mobile_4 > 0 ? mobile_4 : 0) * 20 / 128, 90, 25, 1);
     
-    // ÏÂ°ë²¿·Ö (¶ÔÓ¦ÏòÏÂÍÆÓÍÃÅ£¬¼ÙÉè´ËÊ±ÖµÎª¸º)
-    OLED_DrawRectangle(80, 25, 90, 45, 0); //ÏÂ°ëÍâ¿ò
-    // Ìî³äÏÂ°ë£ºmobile_4 Îª¸ºÊı£¬25 ¼õÈ¥Ò»¸ö¸ºÊıÏàµ±ÓÚ¡°¼ÓÉÏ¡±Ò»¸öÕıÊı£¬Y ×ø±ê±ä´ó£¬ÍùÏÂÑÓÉì
+    // ä¸‹åŠéƒ¨åˆ† (å¯¹åº”å‘ä¸‹æ¨æ²¹é—¨ï¼Œå‡è®¾æ­¤æ—¶å€¼ä¸ºè´Ÿ)
+    OLED_DrawRectangle(80, 25, 90, 45, 0); //ä¸‹åŠå¤–æ¡†
+    // å¡«å……ä¸‹åŠï¼šmobile_4 ä¸ºè´Ÿæ•°ï¼Œ25 å‡å»ä¸€ä¸ªè´Ÿæ•°ç›¸å½“äºâ€œåŠ ä¸Šâ€ä¸€ä¸ªæ­£æ•°ï¼ŒY åæ ‡å˜å¤§ï¼Œå¾€ä¸‹å»¶ä¼¸
     OLED_DrawRectangle(80, 25, 90, 25 - (mobile_4 < 0 ? mobile_4 : 0) * 20 / 128, 1);
     
     uint8_t io1=(Key_GetState(1) !=0);
     uint8_t io2=(Key_GetState(2) !=0);
     uint8_t io3=(Key_GetState(3) !=0);
     uint8_t io4=(Key_GetState(4) !=0);
-    OLED_DrawRectangle(  0,53,16, 63,io1);//°´¼ü1 ĞÎ²Î:¾ØĞÎ×óÉÏ½ÇµÄÁĞÊı0-127 , ¾ØĞÎ×óÉÏ½ÇµÄĞĞÊı0-63,ºóÃæÁ½¸öÊÇÓÒÏÂ½ÇµÄ×ó±ß ÁĞºÍĞĞ,×îºóÒ»¸öÊÇ1Ìî³ä 0 ²»Ìî³ä
-    OLED_DrawRectangle( 36,53,53, 63,io2);//°´¼ü2
-    OLED_DrawRectangle( 73,53,90, 63,io3);//°´¼ü3
-    OLED_DrawRectangle(110,53,126,63,io4);//°´¼ü4
+    OLED_DrawRectangle(  0,53,16, 63,io1);//æŒ‰é”®1 å½¢å‚:çŸ©å½¢å·¦ä¸Šè§’çš„åˆ—æ•°0-127 , çŸ©å½¢å·¦ä¸Šè§’çš„è¡Œæ•°0-63,åé¢ä¸¤ä¸ªæ˜¯å³ä¸‹è§’çš„å·¦è¾¹ åˆ—å’Œè¡Œ,æœ€åä¸€ä¸ªæ˜¯1å¡«å…… 0 ä¸å¡«å……
+    OLED_DrawRectangle( 36,53,53, 63,io2);//æŒ‰é”®2
+    OLED_DrawRectangle( 73,53,90, 63,io3);//æŒ‰é”®3
+    OLED_DrawRectangle(110,53,126,63,io4);//æŒ‰é”®4
  
-    OLED_Refresh();//»º³åÇøĞ´Èëµ½ÆÁÄ»
+    OLED_Refresh();//ç¼“å†²åŒºå†™å…¥åˆ°å±å¹•
 }
 
-//¿´ÃÅ¹·
+//çœ‹é—¨ç‹—
 void IWDG_Init(uint16_t ms)
 {
-    // LSI Ô¼ 40kHz£¬¿´ÃÅ¹·Ê±ÖÓ = LSI / 32 = 40k / 32 = 1250 Hz
-    // Ã¿¸ö¼ÆÊıÖÜÆÚ = 1 / 1250 = 0.8ms
-    // ¼ÆÊı×î´óÖµ 4095£¨12bit£©
+    // LSI çº¦ 40kHzï¼Œçœ‹é—¨ç‹—æ—¶é’Ÿ = LSI / 32 = 40k / 32 = 1250 Hz
+    // æ¯ä¸ªè®¡æ•°å‘¨æœŸ = 1 / 1250 = 0.8ms
+    // è®¡æ•°æœ€å¤§å€¼ 4095ï¼ˆ12bitï¼‰
 
-    // ¼ÆËãÖØ×°ÔØÖµ
-    uint32_t reload = ms / 0.8;   // ms ×ª»»Îª¼ÆÊıÖµ£¨Ô¼µÈÓÚ£©
+    // è®¡ç®—é‡è£…è½½å€¼
+    uint32_t reload = ms / 0.8;   // ms è½¬æ¢ä¸ºè®¡æ•°å€¼ï¼ˆçº¦ç­‰äºï¼‰
 
     if (reload > 4095) reload = 4095;
 
-    // ÔÊĞíĞ´²Ù×÷
+    // å…è®¸å†™æ“ä½œ
     IWDG_WriteAccessCmd(IWDG_WriteAccess_Enable);
 
-    // ÉèÖÃÔ¤·ÖÆµ = 32
+    // è®¾ç½®é¢„åˆ†é¢‘ = 32
     IWDG_SetPrescaler(IWDG_Prescaler_32);
 
-    // ÉèÖÃÖØÔØÖµ
+    // è®¾ç½®é‡è½½å€¼
     IWDG_SetReload(reload);
 
-    // Reload Ò»´Î
+    // Reload ä¸€æ¬¡
     IWDG_ReloadCounter();
 
-    // Æô¶¯ IWDG
+    // å¯åŠ¨ IWDG
     IWDG_Enable();
 }

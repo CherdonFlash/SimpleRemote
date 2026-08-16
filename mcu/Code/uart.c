@@ -1,26 +1,26 @@
 #include "uart.h"
 
-// ³õÊ¼»¯ USART1£¬²¨ÌØÂÊ115200£¬8N1£¬ÎŞÖĞ¶Ï
+// åˆå§‹åŒ– USART1ï¼Œæ³¢ç‰¹ç‡115200ï¼Œ8N1ï¼Œæ— ä¸­æ–­
 void USART1_Init(uint32_t baudrate)
 {
     GPIO_InitTypeDef GPIO_InitStructure;
     USART_InitTypeDef USART_InitStructure;
 
-    // 1. Ê¹ÄÜÊ±ÖÓ
+    // 1. ä½¿èƒ½æ—¶é’Ÿ
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_USART1, ENABLE);
 
-    // 2. ÅäÖÃ PA9 ÎªÍÆÍì¸´ÓÃÊä³ö£¨TX£©
+    // 2. é…ç½® PA9 ä¸ºæ¨æŒ½å¤ç”¨è¾“å‡ºï¼ˆTXï¼‰
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-    // 3. ÅäÖÃ PA10 Îª¸¡¿ÕÊäÈë£¨RX£©
+    // 3. é…ç½® PA10 ä¸ºæµ®ç©ºè¾“å…¥ï¼ˆRXï¼‰
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
     GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-    // 4. ÅäÖÃ´®¿Ú²ÎÊı
+    // 4. é…ç½®ä¸²å£å‚æ•°
     USART_InitStructure.USART_BaudRate = baudrate;
     USART_InitStructure.USART_WordLength = USART_WordLength_8b;
     USART_InitStructure.USART_StopBits = USART_StopBits_1;
@@ -29,7 +29,7 @@ void USART1_Init(uint32_t baudrate)
     USART_InitStructure.USART_Mode = USART_Mode_Tx | USART_Mode_Rx;
     USART_Init(USART1, &USART_InitStructure);
 
-    // 5. Ê¹ÄÜ´®¿Ú
+    // 5. ä½¿èƒ½ä¸²å£
     USART_Cmd(USART1, ENABLE);
 }
 
@@ -49,7 +49,7 @@ void UART1_SendString(const char* str)
 
 void UART1_Printf(const char *fmt, ...)
 {
-    char buffer[128];  // ¸ù¾İĞèÒªµ÷Õû»º³åÇø´óĞ¡
+    char buffer[128];  // æ ¹æ®éœ€è¦è°ƒæ•´ç¼“å†²åŒºå¤§å°
     va_list args;
     va_start(args, fmt);
     vsnprintf(buffer, sizeof(buffer), fmt, args);

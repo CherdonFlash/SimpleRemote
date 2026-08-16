@@ -1,53 +1,53 @@
 #include "mobile.h"
 
-// π”√÷–∂œ+DMAµƒ∑Ω Ω
+//‰ΩøÁî®‰∏≠Êñ≠+DMAÁöÑÊñπÂºè
 #define ADC_CHANNELS 5
-volatile uint16_t adc_values[ADC_CHANNELS];//‘≠ º÷µ
+volatile uint16_t adc_values[ADC_CHANNELS];//ÂéüÂßãÂÄº
 int8_t mobile_1;
 int8_t mobile_2;
 int8_t mobile_3;
-int8_t mobile_4;//”Õ√≈0-255
+int8_t mobile_4;//Ê≤πÈó®0-255
 
-uint16_t BAT_ADC;//µÁ‘¥ADC‘≠ º÷µ
-//Ω´“°∏Àµƒ‘≠ º ˝æ›”≥…‰µΩ0-255 “≤æÕ «1◊÷Ω⁄ ∑Ω±„¥´ ‰
+uint16_t BAT_ADC;//ÁîµÊ∫êADCÂéüÂßãÂÄº
+//Â∞ÜÊëáÊùÜÁöÑÂéüÂßãÊï∞ÊçÆÊò†Â∞ÑÂà∞0-255 ‰πüÂ∞±ÊòØ1Â≠óËäÇ Êñπ‰æø‰º†Ëæì
 void mobile_data(){
     mobile_1 = (int8_t)(((4095 -adc_values[0]) * 255) / 4095 - 128);
     mobile_2 = (int8_t)(((4095 -adc_values[1]) * 255) / 4095 - 128);
     mobile_3 = (int8_t)((adc_values[2] * 255) / 4095 - 128);
-    mobile_4 = (int8_t)((adc_values[3] * 255) / 4095 - 128);//”Õ√≈ «0-255
+    mobile_4 = (int8_t)((adc_values[3] * 255) / 4095 - 128);//Ê≤πÈó®ÊòØ0-255
     
-    //µÁ‘¥ADC‘≠ º÷µ
+    //ÁîµÊ∫êADCÂéüÂßãÂÄº
     BAT_ADC = (uint16_t)adc_values[4];
 }
 
-// ≥ı ºªØ PA2°¢PA3°¢PA4°¢PB0°¢ ◊˜Œ™ “°∏ÀADC Õ®µ¿ ◊¢“‚PB1 ◊˜Œ™µÁ‘¥ADC
+// ÂàùÂßãÂåñ PA2„ÄÅPA3„ÄÅPA4„ÄÅPB0„ÄÅ ‰Ωú‰∏∫ ÊëáÊùÜADC ÈÄöÈÅì Ê≥®ÊÑèPB1 ‰Ωú‰∏∫ÁîµÊ∫êADC
 void mobile_init(){
     GPIO_InitTypeDef GPIO_InitStructure;
     ADC_InitTypeDef ADC_InitStructure;
     DMA_InitTypeDef DMA_InitStructure;
 
-    // 1.  πƒ‹ ±÷”
+    // 1. ‰ΩøËÉΩÊó∂Èíü
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | 
                            RCC_APB2Periph_GPIOB |
                            RCC_APB2Periph_ADC1, ENABLE);
     RCC_AHBPeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
     RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
 
-    // 2. ≈‰÷√ GPIO (PA2, PA3, PA4 Œ™ƒ£ƒ‚ ‰»Î)
+    // 2. ÈÖçÁΩÆ GPIO (PA2, PA3, PA4 ‰∏∫Ê®°ÊãüËæìÂÖ•)
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2 | GPIO_Pin_3 | GPIO_Pin_4;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AIN;
     GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-    // PB0°¢PB1 Œ™ƒ£ƒ‚ ‰»Î
+    // PB0„ÄÅPB1 ‰∏∫Ê®°ÊãüËæìÂÖ•
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1;
     GPIO_Init(GPIOB, &GPIO_InitStructure);
 
-    // 3. ≈‰÷√ DMA1_Channel1 (ADC1 -> ƒ⁄¥Ê)
+    // 3. ÈÖçÁΩÆ DMA1_Channel1 (ADC1 -> ÂÜÖÂ≠ò)
     DMA_DeInit(DMA1_Channel1);
     DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&ADC1->DR;
     DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)adc_values;
     DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralSRC;
-    DMA_InitStructure.DMA_BufferSize = ADC_CHANNELS; // 5Õ®µ¿
+    DMA_InitStructure.DMA_BufferSize = ADC_CHANNELS; // 5ÈÄöÈÅì
     DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
     DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
     DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
@@ -59,18 +59,18 @@ void mobile_init(){
 
     DMA_Cmd(DMA1_Channel1, ENABLE);
 
-    // 4. ≈‰÷√ ADC
+    // 4. ÈÖçÁΩÆ ADC
     RCC_ADCCLKConfig(RCC_PCLK2_Div8);
 
     ADC_InitStructure.ADC_Mode = ADC_Mode_Independent;
-    ADC_InitStructure.ADC_ScanConvMode = ENABLE;         // ∂‡Õ®µ¿
+    ADC_InitStructure.ADC_ScanConvMode = ENABLE;         // Â§öÈÄöÈÅì
     ADC_InitStructure.ADC_ContinuousConvMode = ENABLE;
     ADC_InitStructure.ADC_ExternalTrigConv = ADC_ExternalTrigConv_None;
     ADC_InitStructure.ADC_DataAlign = ADC_DataAlign_Right;
-    ADC_InitStructure.ADC_NbrOfChannel = ADC_CHANNELS;   // 5Õ®µ¿
+    ADC_InitStructure.ADC_NbrOfChannel = ADC_CHANNELS;   // 5ÈÄöÈÅì
     ADC_Init(ADC1, &ADC_InitStructure);
 
-    // …Ë÷√◊™ªªÀ≥–Ú
+    // ËÆæÁΩÆËΩ¨Êç¢È°∫Â∫è
     // PA2 = ADC2
     ADC_RegularChannelConfig(ADC1, ADC_Channel_2, 1, ADC_SampleTime_239Cycles5);
     // PA3 = ADC3
@@ -82,19 +82,19 @@ void mobile_init(){
     // PB1 = ADC9
     ADC_RegularChannelConfig(ADC1, ADC_Channel_9, 5, ADC_SampleTime_239Cycles5);
 
-    //  πƒ‹ ADC DMA
+    // ‰ΩøËÉΩ ADC DMA
     ADC_DMACmd(ADC1, ENABLE);
 
-    // 5. ∆Ù∂Ø ADC
+    // 5. ÂêØÂä® ADC
     ADC_Cmd(ADC1, ENABLE);
 
-    // –£◊º
+    // Ê†°ÂáÜ
     ADC_ResetCalibration(ADC1);
     while(ADC_GetResetCalibrationStatus(ADC1));
     ADC_StartCalibration(ADC1);
     while(ADC_GetCalibrationStatus(ADC1));
 
-    // ø™ º◊™ªª
+    // ÂºÄÂßãËΩ¨Êç¢
     ADC_SoftwareStartConvCmd(ADC1, ENABLE);
 }
 

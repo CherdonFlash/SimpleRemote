@@ -4,7 +4,7 @@
 #include "stm32f10x.h"
 #include "uart.h"
 #include "delay.h"
-/**********  NRF24L01¼Ä´æÆ÷²Ù×÷ÃüÁî  ***********/
+/**********  NRF24L01å¯„å­˜å™¨æ“ä½œå‘½ä»¤  ***********/
 #define nRF_READ_REG        0x00 
 #define nRF_WRITE_REG       0x20 
 #define RD_RX_PLOAD     0x61  
@@ -12,38 +12,38 @@
 #define FLUSH_TX        0xE1  
 #define FLUSH_RX        0xE2  
 #define REUSE_TX_PL     0xE3  
-#define NOP             0xFF        //¿ÕµØÖ·
-/**********  NRF24L01¼Ä´æÆ÷µØÖ·   *************/
-//ÒÔÏÂ¼Ä´æÆ÷ÔÚÊı¾İÊÖ²á57Ò³¿ªÊ¼ÓĞËµÃ÷
-#define CONFIG          0x00        //ÅäÖÃ¼Ä´æÆ÷                   
-#define EN_AA           0x01        //×Ô¶¯È·ÈÏ¹¦ÄÜ
-#define EN_RXADDR       0x02        //ÆôÓÃRXµØÖ·
-#define SETUP_AW        0x03        //µØÖ·¿í¶ÈµÄÉèÖÃ
-#define SETUP_RETR      0x04        //×Ô¶¯ÖØ´«ÉèÖÃ
-#define RF_CH           0x05        //ÉäÆµÍ¨µÀ
-#define RF_SETUP        0x06        //ÉäÆµÉèÖÃ¼Ä´æÆ÷
-#define STATUS          0x07        //×´Ì¬¼Ä´æÆ÷
-#define OBSERVE_TX      0x08        //·¢ËÍ¹Û²â¼Ä´æÆ÷
-#define CD              0x09        //½ÓÊÜ¹¦ÂÊ¼ì²âÆ÷
-#define RX_ADDR_P0      0x0A        //½ÓÊÜµØÖ·Êı¾İ¹ÜµÀ0 ×î´ó5×Ö½Ú
-#define RX_ADDR_P1      0x0B        //½ÓÊÜµØÖ·Êı¾İ¹ÜµÀ1 ×î´ó5×Ö½Ú
-#define RX_ADDR_P2      0x0C        //ÊÇ¹ÜµÀ1µÄµÍ8Î»
-#define RX_ADDR_P3      0x0D        //ÊÇ¹ÜµÀ1µÄµÍ8Î»
-#define RX_ADDR_P4      0x0E        //ÊÇ¹ÜµÀ1µÄµÍ8Î»
-#define RX_ADDR_P5      0x0F        //ÊÇ¹ÜµÀ1µÄµÍ8Î»
-#define TX_ADDR         0x10        //´«ÊäµØÖ·
-#define RX_PW_P0        0x11        //¹ÜµÀ0ÖĞÓĞĞ§¸ºÔØµÄ×Ö½ÚÊı(1-32)
-#define RX_PW_P1        0x12        //¹ÜµÀ1ÖĞÓĞĞ§¸ºÔØµÄ×Ö½ÚÊı(1-32)
-#define RX_PW_P2        0x13        //¹ÜµÀ2ÖĞÓĞĞ§¸ºÔØµÄ×Ö½ÚÊı(1-32)
-#define RX_PW_P3        0x14        //¹ÜµÀ3ÖĞÓĞĞ§¸ºÔØµÄ×Ö½ÚÊı(1-32)
-#define RX_PW_P4        0x15        //¹ÜµÀ4ÖĞÓĞĞ§¸ºÔØµÄ×Ö½ÚÊı(1-32)
-#define RX_PW_P5        0x16        //¹ÜµÀ5ÖĞÓĞĞ§¸ºÔØµÄ×Ö½ÚÊı(1-32)
-#define FIFO_STATUS     0x17        //ÏÈ½øÏÈ³ö×´Ì¬¼Ä´æÆ÷
+#define NOP             0xFF        //ç©ºåœ°å€
+/**********  NRF24L01å¯„å­˜å™¨åœ°å€   *************/
+//ä»¥ä¸‹å¯„å­˜å™¨åœ¨æ•°æ®æ‰‹å†Œ57é¡µå¼€å§‹æœ‰è¯´æ˜
+#define CONFIG          0x00        //é…ç½®å¯„å­˜å™¨                   
+#define EN_AA           0x01        //è‡ªåŠ¨ç¡®è®¤åŠŸèƒ½
+#define EN_RXADDR       0x02        //å¯ç”¨RXåœ°å€
+#define SETUP_AW        0x03        //åœ°å€å®½åº¦çš„è®¾ç½®
+#define SETUP_RETR      0x04        //è‡ªåŠ¨é‡ä¼ è®¾ç½®
+#define RF_CH           0x05        //å°„é¢‘é€šé“
+#define RF_SETUP        0x06        //å°„é¢‘è®¾ç½®å¯„å­˜å™¨
+#define STATUS          0x07        //çŠ¶æ€å¯„å­˜å™¨
+#define OBSERVE_TX      0x08        //å‘é€è§‚æµ‹å¯„å­˜å™¨
+#define CD              0x09        //æ¥å—åŠŸç‡æ£€æµ‹å™¨
+#define RX_ADDR_P0      0x0A        //æ¥å—åœ°å€æ•°æ®ç®¡é“0 æœ€å¤§5å­—èŠ‚
+#define RX_ADDR_P1      0x0B        //æ¥å—åœ°å€æ•°æ®ç®¡é“1 æœ€å¤§5å­—èŠ‚
+#define RX_ADDR_P2      0x0C        //æ˜¯ç®¡é“1çš„ä½8ä½
+#define RX_ADDR_P3      0x0D        //æ˜¯ç®¡é“1çš„ä½8ä½
+#define RX_ADDR_P4      0x0E        //æ˜¯ç®¡é“1çš„ä½8ä½
+#define RX_ADDR_P5      0x0F        //æ˜¯ç®¡é“1çš„ä½8ä½
+#define TX_ADDR         0x10        //ä¼ è¾“åœ°å€
+#define RX_PW_P0        0x11        //ç®¡é“0ä¸­æœ‰æ•ˆè´Ÿè½½çš„å­—èŠ‚æ•°(1-32)
+#define RX_PW_P1        0x12        //ç®¡é“1ä¸­æœ‰æ•ˆè´Ÿè½½çš„å­—èŠ‚æ•°(1-32)
+#define RX_PW_P2        0x13        //ç®¡é“2ä¸­æœ‰æ•ˆè´Ÿè½½çš„å­—èŠ‚æ•°(1-32)
+#define RX_PW_P3        0x14        //ç®¡é“3ä¸­æœ‰æ•ˆè´Ÿè½½çš„å­—èŠ‚æ•°(1-32)
+#define RX_PW_P4        0x15        //ç®¡é“4ä¸­æœ‰æ•ˆè´Ÿè½½çš„å­—èŠ‚æ•°(1-32)
+#define RX_PW_P5        0x16        //ç®¡é“5ä¸­æœ‰æ•ˆè´Ÿè½½çš„å­—èŠ‚æ•°(1-32)
+#define FIFO_STATUS     0x17        //å…ˆè¿›å…ˆå‡ºçŠ¶æ€å¯„å­˜å™¨
 
-/******   STATUS¼Ä´æÆ÷bitÎ»¶¨Òå      *******/
-#define MAX_TX  	0x10  	  //´ïµ½×î´ó·¢ËÍ´ÎÊıÖĞ¶Ï
-#define TX_OK   	0x20  	  //TX·¢ËÍÍê³ÉÖĞ¶Ï
-#define RX_OK   	0x40  	  //½ÓÊÕµ½Êı¾İÖĞ¶Ï
+/******   STATUSå¯„å­˜å™¨bitä½å®šä¹‰      *******/
+#define MAX_TX  	0x10  	  //è¾¾åˆ°æœ€å¤§å‘é€æ¬¡æ•°ä¸­æ–­
+#define TX_OK   	0x20  	  //TXå‘é€å®Œæˆä¸­æ–­
+#define RX_OK   	0x40  	  //æ¥æ”¶åˆ°æ•°æ®ä¸­æ–­
 void nrf24_gpio(void);
 
 uint8_t SPI1_ReadWriteByte(uint8_t TxData);

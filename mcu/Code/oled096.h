@@ -3,8 +3,8 @@
 
 #include "stm32f10x.h"
 #include "iic.h"
-#include <stdio.h>  // 用于 sprintf
-#include <math.h>  // 需要包含math.h用于sin、cos
+#include <stdio.h>  // 鐢ㄤ簬 sprintf
+#include <math.h>  // 闇�瑕佸寘鍚玬ath.h鐢ㄤ簬sin銆乧os
 extern const uint8_t ASCII816[95][16];
 void OLED_Init(void);
 

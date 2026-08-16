@@ -1,28 +1,28 @@
 #include "key.h"
-//------¿ªÔ´×÷ÕßEzWalk  qq:1228879785-----------
-//------±¾ÎÄ¼şÈÕÆÚ2025/9/29 °æ±¾1.0-------------
-//ÄãÓĞ¼¸¸ö°´¼ü¾ÍÈ«¾Ö¼¸¸ö½á¹¹Ìå¶ÔÏó ²¢ÇÒĞŞ¸Äº¯ÊıKey_Init_All ,Key_GPIO_Init ,Key_Mange,Key_Read , Key_GetStateÀïÃæµÄÄÚÈİµ÷Õûµ½×Ô¼ºµÄÇé¿ö
-//×îºó°ÑKey_Mangeº¯Êı ·ÅÈëÖĞ¶Ïº¯ÊıÖĞ  Íâ²¿Ö»ĞèÒªµ÷ÓÃÒ»´ÎKey_Init_All ½øĞĞ³õÊ¼»¯ È»ºó¾Í¿ÉÒÔÍ¨¹ıKey_GetState(x)½øĞĞ»ñµÃ°´¼üµÄÂß¼­×´Ì¬ 
-//¸ù¾İĞèÇó¿ÉÒÔÑ¡ÔñÔÚ»Øµ÷º¯ÊıÀïÃæ·ÅÈëÄã×Ô¼ºÒªÖ´ĞĞµÄ»Øµ÷º¯Êı,µ¥»÷ºÍË«»÷Ö»»áÖ´ĞĞÒ»´Î,³¤°´´¥·¢ºó»áÒ»Ö±Ö´ĞĞ Ö´ĞĞ¼ä¸ôºÍ´ÎÊı¸ù¾İ³¤°´»Øµ÷µ÷ÓÃ¼ä¸ô¾ö¶¨
-//×¢ÒâË«»÷µÄÊ±ºò Ç°Ò»¸öÂß¼­×´Ì¬Ò»¶¨ÊÇµ¥»÷µÄÂß¼­×´Ì¬  Òò´ËÈç¹ûÄãÏë×öÒ»Ğ©±È½Ï¾«Ï¸µÄÂß¼­ ÇëÊ¹ÓÃ»Øµ÷º¯Êı
+//------å¼€æºä½œè€…EzWalk  qq:1228879785-----------
+//------æœ¬æ–‡ä»¶æ—¥æœŸ2025/9/29 ç‰ˆæœ¬1.0-------------
+//ä½ æœ‰å‡ ä¸ªæŒ‰é”®å°±å…¨å±€å‡ ä¸ªç»“æ„ä½“å¯¹è±¡ å¹¶ä¸”ä¿®æ”¹å‡½æ•°Key_Init_All ,Key_GPIO_Init ,Key_Mange,Key_Read , Key_GetStateé‡Œé¢çš„å†…å®¹è°ƒæ•´åˆ°è‡ªå·±çš„æƒ…å†µ
+//æœ€åæŠŠKey_Mangeå‡½æ•° æ”¾å…¥ä¸­æ–­å‡½æ•°ä¸­  å¤–éƒ¨åªéœ€è¦è°ƒç”¨ä¸€æ¬¡Key_Init_All è¿›è¡Œåˆå§‹åŒ– ç„¶åå°±å¯ä»¥é€šè¿‡Key_GetState(x)è¿›è¡Œè·å¾—æŒ‰é”®çš„é€»è¾‘çŠ¶æ€ 
+//æ ¹æ®éœ€æ±‚å¯ä»¥é€‰æ‹©åœ¨å›è°ƒå‡½æ•°é‡Œé¢æ”¾å…¥ä½ è‡ªå·±è¦æ‰§è¡Œçš„å›è°ƒå‡½æ•°,å•å‡»å’ŒåŒå‡»åªä¼šæ‰§è¡Œä¸€æ¬¡,é•¿æŒ‰è§¦å‘åä¼šä¸€ç›´æ‰§è¡Œ æ‰§è¡Œé—´éš”å’Œæ¬¡æ•°æ ¹æ®é•¿æŒ‰å›è°ƒè°ƒç”¨é—´éš”å†³å®š
+//æ³¨æ„åŒå‡»çš„æ—¶å€™ å‰ä¸€ä¸ªé€»è¾‘çŠ¶æ€ä¸€å®šæ˜¯å•å‡»çš„é€»è¾‘çŠ¶æ€  å› æ­¤å¦‚æœä½ æƒ³åšä¸€äº›æ¯”è¾ƒç²¾ç»†çš„é€»è¾‘ è¯·ä½¿ç”¨å›è°ƒå‡½æ•°
 Key_t IO1;
 Key_t IO2;
 Key_t IO3;
 Key_t IO4;
-//°´¼ü¹¦ÄÜ×Ü³õÊ¼»¯º¯Êı
+//æŒ‰é”®åŠŸèƒ½æ€»åˆå§‹åŒ–å‡½æ•°
 void Key_Init_All(){
-    //³õÊ¼»¯°´¼üÒı½Å
+    //åˆå§‹åŒ–æŒ‰é”®å¼•è„š
     Key_GPIO_Init();
-    //Ã¿¸ö°´¼ü½á¹¹Ìå¶ÔÓ¦µÄID, Ïû¶¶Ê±¼ä:1x10ms(¶¨Ê±Æ÷ÖÜÆÚ),³¤°´ÅĞ¶¨Ê±¼ä50x10ms,Ë«»÷×î´ó¼ä¸ô40x10ms,³¤°´»Øµ÷µ÷ÓÃ¼ä¸ô4x10ms,µ¥»÷,Ë«»÷,³¤°´µÄ»Øµ÷º¯Êı.
+    //æ¯ä¸ªæŒ‰é”®ç»“æ„ä½“å¯¹åº”çš„ID, æ¶ˆæŠ–æ—¶é—´:1x10ms(å®šæ—¶å™¨å‘¨æœŸ),é•¿æŒ‰åˆ¤å®šæ—¶é—´50x10ms,åŒå‡»æœ€å¤§é—´éš”40x10ms,é•¿æŒ‰å›è°ƒè°ƒç”¨é—´éš”4x10ms,å•å‡»,åŒå‡»,é•¿æŒ‰çš„å›è°ƒå‡½æ•°.
     Key_Init(&IO1, 1, 1, 50, 40, 4,NULL, NULL, NULL);
     Key_Init(&IO2, 2, 1, 50, 40, 4,NULL, NULL, NULL);
     Key_Init(&IO3, 3, 1, 50, 40, 4,NULL, NULL, NULL);
     Key_Init(&IO4, 4, 1, 50, 40, 4,NULL, NULL, NULL);
     
-    TIM2_Init_10ms();//³õÊ¼»¯°´¼ü¶ÔÓ¦µÄ¶¨Ê±Æ÷ÖĞ¶Ï²¢¿ªÊ¼
+    TIM2_Init_10ms();//åˆå§‹åŒ–æŒ‰é”®å¯¹åº”çš„å®šæ—¶å™¨ä¸­æ–­å¹¶å¼€å§‹
 
 }
-//×Ü°´¼ü´¦Àí  Çë°ÑÕâ¸öº¯Êı·ÅÈëÖĞ¶Ïº¯Êı
+//æ€»æŒ‰é”®å¤„ç†  è¯·æŠŠè¿™ä¸ªå‡½æ•°æ”¾å…¥ä¸­æ–­å‡½æ•°
 void Key_Mange(){
 	Key_Status(&IO1);
 	Key_Status(&IO2);
@@ -30,63 +30,63 @@ void Key_Mange(){
 	Key_Status(&IO4);
 
 }
-//°´¼ü³õÊ¼»¯  ÒÑÍâ²¿ÉÏÀ­
+//æŒ‰é”®åˆå§‹åŒ–  å·²å¤–éƒ¨ä¸Šæ‹‰
 void Key_GPIO_Init(void)
 {
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB | RCC_APB2Periph_AFIO, ENABLE);
 
     GPIO_InitTypeDef GPIO_InitStructure;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;  // ¸ÄÎª¸¡¿ÕÊäÈë
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;  // æ”¹ä¸ºæµ®ç©ºè¾“å…¥
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 
 
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12 | GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_15;
     GPIO_Init(GPIOB, &GPIO_InitStructure);
 
-    // ½ûÓÃµ÷ÊÔ¿Ú£¬ÊÍ·Å PA15 PB3 PB4 ×öÆÕÍ¨IO£¨ÈçÓĞ±ØÒª£©
+    // ç¦ç”¨è°ƒè¯•å£ï¼Œé‡Šæ”¾ PA15 PB3 PB4 åšæ™®é€šIOï¼ˆå¦‚æœ‰å¿…è¦ï¼‰
     //GPIO_PinRemapConfig(GPIO_Remap_SWJ_Disable, ENABLE);
 }
-//¶¨Ê±Æ÷ÖĞ¶Ï 10msÒ»´Î
+//å®šæ—¶å™¨ä¸­æ–­ 10msä¸€æ¬¡
 void TIM2_Init_10ms(void)
 {
-    // 1. ¿ªÆô¶¨Ê±Æ÷Ê±ÖÓ
+    // 1. å¼€å¯å®šæ—¶å™¨æ—¶é’Ÿ
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
 
-    // 2. ¶¨Ê±Æ÷Ê±»ù½á¹¹ÌåÅäÖÃ
+    // 2. å®šæ—¶å™¨æ—¶åŸºç»“æ„ä½“é…ç½®
     TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
 
     /*
-     * ¼ÙÉè APB1 Ê±ÖÓ = 36MHz
-     * Îª²úÉú 10ms ÖĞ¶Ï£¬ĞèÒª¶¨Ê±Æ÷Òç³öÖÜÆÚÎª 10ms = 10000us
-     * ¿ÉÉèÖÃ£º
-     *    Ô¤·ÖÆµÆ÷ Prescaler = 7199  £¨¼´ 36MHz / (7199 + 1) = 5kHz£©
-     *    ×Ô¶¯ÖØ×°ÔØ ARR = 49         £¨¼´ 50¸ö¼ÆÊı = 10ms£©
+     * å‡è®¾ APB1 æ—¶é’Ÿ = 36MHz
+     * ä¸ºäº§ç”Ÿ 10ms ä¸­æ–­ï¼Œéœ€è¦å®šæ—¶å™¨æº¢å‡ºå‘¨æœŸä¸º 10ms = 10000us
+     * å¯è®¾ç½®ï¼š
+     *    é¢„åˆ†é¢‘å™¨ Prescaler = 7199  ï¼ˆå³ 36MHz / (7199 + 1) = 5kHzï¼‰
+     *    è‡ªåŠ¨é‡è£…è½½ ARR = 49         ï¼ˆå³ 50ä¸ªè®¡æ•° = 10msï¼‰
      *    10ms = (ARR+1) * (PSC+1) / 36MHz
      */
 
-    TIM_TimeBaseStructure.TIM_Prescaler = 7200-1;             // ·ÖÆµÏµÊı
-    TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up; // ÏòÉÏ¼ÆÊı
-    TIM_TimeBaseStructure.TIM_Period = 50-1;                  // ×Ô¶¯ÖØ×°ÔØÖµ
-    TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1; // Ê±ÖÓ·ÖÆµ
-    TIM_TimeBaseStructure.TIM_RepetitionCounter = 0;        // ÖØ¸´¼ÆÊıÆ÷£¨½ö¸ß¼¶¶¨Ê±Æ÷£©
+    TIM_TimeBaseStructure.TIM_Prescaler = 7200-1;             // åˆ†é¢‘ç³»æ•°
+    TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up; // å‘ä¸Šè®¡æ•°
+    TIM_TimeBaseStructure.TIM_Period = 50-1;                  // è‡ªåŠ¨é‡è£…è½½å€¼
+    TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1; // æ—¶é’Ÿåˆ†é¢‘
+    TIM_TimeBaseStructure.TIM_RepetitionCounter = 0;        // é‡å¤è®¡æ•°å™¨ï¼ˆä»…é«˜çº§å®šæ—¶å™¨ï¼‰
     TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure);
 
-    // 3. Çå³ıÖĞ¶Ï±êÖ¾Î»
+    // 3. æ¸…é™¤ä¸­æ–­æ ‡å¿—ä½
     TIM_ClearFlag(TIM2, TIM_FLAG_Update);
-    TIM_ITConfig(TIM2, TIM_IT_Update, ENABLE); // ¿ªÆô¸üĞÂÖĞ¶Ï
+    TIM_ITConfig(TIM2, TIM_IT_Update, ENABLE); // å¼€å¯æ›´æ–°ä¸­æ–­
 
-    // 4. ÅäÖÃ NVIC
+    // 4. é…ç½® NVIC
     NVIC_InitTypeDef NVIC_InitStructure;
     NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn;
-    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1; // ÇÀÕ¼ÓÅÏÈ¼¶
-    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;        // ÏìÓ¦ÓÅÏÈ¼¶
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1; // æŠ¢å ä¼˜å…ˆçº§
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;        // å“åº”ä¼˜å…ˆçº§
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&NVIC_InitStructure);
 
-    // 5. Æô¶¯¶¨Ê±Æ÷
+    // 5. å¯åŠ¨å®šæ—¶å™¨
     TIM_Cmd(TIM2, ENABLE);
 }
-// °´¼üÎïÀí×´Ì¬£º0 ±íÊ¾°´ÏÂ£¬1 ±íÊ¾ËÉ¿ª
+// æŒ‰é”®ç‰©ç†çŠ¶æ€ï¼š0 è¡¨ç¤ºæŒ‰ä¸‹ï¼Œ1 è¡¨ç¤ºæ¾å¼€
 uint8_t Key_Read(uint8_t key_id)
 {
 	if(key_id ==1 )     return GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_12);
@@ -95,11 +95,11 @@ uint8_t Key_Read(uint8_t key_id)
 	else if(key_id ==4 )return GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_15);
 
 
-	//²»»áÖ´ĞĞµ½Õâ  Ïû³ı±àÒë¾¯¸æ
+	//ä¸ä¼šæ‰§è¡Œåˆ°è¿™  æ¶ˆé™¤ç¼–è¯‘è­¦å‘Š
 	return 1;
 }
 
-// »ñÈ¡°´¼üÂß¼­×´Ì¬(µ¥»÷ Ë«»÷ ³¤°´)
+// è·å–æŒ‰é”®é€»è¾‘çŠ¶æ€(å•å‡» åŒå‡» é•¿æŒ‰)
 uint8_t Key_GetState(uint8_t id)
 {
     switch (id) {
@@ -107,52 +107,52 @@ uint8_t Key_GetState(uint8_t id)
         case 2: return IO2.state;
         case 3: return IO3.state;
         case 4: return IO4.state;
-        default: return 0;  // ²»´æÔÚµÄ°´¼ü
+        default: return 0;  // ä¸å­˜åœ¨çš„æŒ‰é”®
     }
 }
-//°´¼ü½á¹¹Ìå¶ÔÏó³õÊ¼»¯º¯Êı
+//æŒ‰é”®ç»“æ„ä½“å¯¹è±¡åˆå§‹åŒ–å‡½æ•°
 void Key_Init(Key_t *key, uint8_t id,
               uint8_t debounce, uint8_t long_press, uint8_t double_wait, uint8_t long_interval,
               void (*single_cb)(void), void (*double_cb)(void), void (*long_cb)(void))
 {
-    // ÅäÖÃ²ÎÊı
+    // é…ç½®å‚æ•°
     key->debounce_ticks = debounce;
     key->long_press_ticks = long_press;
     key->double_wait_ticks = double_wait;
     key->long_tick_interval = long_interval;
 
-    // ×´Ì¬±äÁ¿³õÊ¼»¯
+    // çŠ¶æ€å˜é‡åˆå§‹åŒ–
     key->flag = 0;
     key->state = 0;
     key->count = 0;
     key->press = 0;
     key->long_tick = 0;
 
-    // ±àºÅ
+    // ç¼–å·
     key->id = id;
 
-    // »Øµ÷º¯Êı
+    // å›è°ƒå‡½æ•°
     key->single_callback = single_cb;
     key->double_callback = double_cb;
     key->long_callback = long_cb;
 }
 
-//°´¼ü´¦Àíº¯Êı£¨Ã¿10msµ÷ÓÃÒ»´Î£©
+//æŒ‰é”®å¤„ç†å‡½æ•°ï¼ˆæ¯10msè°ƒç”¨ä¸€æ¬¡ï¼‰
 void Key_Status(Key_t *key)
 {
-    uint8_t key_val = Key_Read(key->id);  // 0=°´ÏÂ, 1=ËÉ¿ª
+    uint8_t key_val = Key_Read(key->id);  // 0=æŒ‰ä¸‹, 1=æ¾å¼€
 
     switch (key->flag)
     {
-    case 0: // ¿ÕÏĞ
+    case 0: // ç©ºé—²
         if (key_val == 0) {
             key->flag = 1;
             key->count = 0;
         }
-        key->state = 0;// ±£³Ö¿ÕÏĞ
+        key->state = 0;// ä¿æŒç©ºé—²
         break;
 
-    case 1: // µÚÒ»´Î°´ÏÂÏû¶¶
+    case 1: // ç¬¬ä¸€æ¬¡æŒ‰ä¸‹æ¶ˆæŠ–
         if (key_val == 0) {
         	key->count++;
             if (key->count >= key->debounce_ticks) {
@@ -165,7 +165,7 @@ void Key_Status(Key_t *key)
         key->state = 0;
         break;
 
-    case 2: // µÚÒ»´ÎÍêÈ«°´ÏÂ
+    case 2: // ç¬¬ä¸€æ¬¡å®Œå…¨æŒ‰ä¸‹
         key->count++;
         if (key_val == 1) {
             if (key->count < key->long_press_ticks) {
@@ -185,7 +185,7 @@ void Key_Status(Key_t *key)
         }
         break;
 
-    case 3: // µÚÒ»´ÎËÉ¿ªÏû¶¶
+    case 3: // ç¬¬ä¸€æ¬¡æ¾å¼€æ¶ˆæŠ–
         if (key_val == 1) {
         	key->count++;
             if (key->count >= key->debounce_ticks) {
@@ -199,26 +199,26 @@ void Key_Status(Key_t *key)
         }
         break;
 
-    case 4: // µÈ´ıµÚ¶ş´Î°´ÏÂ
+    case 4: // ç­‰å¾…ç¬¬äºŒæ¬¡æŒ‰ä¸‹
     	key->count++;
         if (key_val == 0) {
             if (key->count < key->double_wait_ticks) {
-            	key->flag = 5; // µÚ¶ş´Î°´ÏÂÏû¶¶
+            	key->flag = 5; // ç¬¬äºŒæ¬¡æŒ‰ä¸‹æ¶ˆæŠ–
                 key->count = 0;
             } else {
             	key->flag = 0;
-            	key->state = 0; // µ¥»÷ÒÑÈ·ÈÏ£¬³¬Ê±
+            	key->state = 0; // å•å‡»å·²ç¡®è®¤ï¼Œè¶…æ—¶
             }
         } else if (key->count >= key->double_wait_ticks) {
         	key->flag = 0;
 
-        	key->state = 0; // µ¥»÷³ÉÁ¢ºó³¬Ê±
+        	key->state = 0; // å•å‡»æˆç«‹åè¶…æ—¶
         } else {
         	key->state = 0;
         }
         break;
 
-    case 5: // µÚ¶ş´Î°´ÏÂÏû¶¶
+    case 5: // ç¬¬äºŒæ¬¡æŒ‰ä¸‹æ¶ˆæŠ–
         if (key_val == 0) {
         	key->count++;
             if (key->count >= key->debounce_ticks) {
@@ -232,7 +232,7 @@ void Key_Status(Key_t *key)
         key->state = 0;
         break;
 
-    case 6: // µÚ¶ş´ÎÍêÈ«°´ÏÂ
+    case 6: // ç¬¬äºŒæ¬¡å®Œå…¨æŒ‰ä¸‹
         key->count++;
         if (key_val == 1) {
             key->flag = 7;
@@ -247,7 +247,7 @@ void Key_Status(Key_t *key)
 		}
         break;
 
-    case 7: // µÚ¶ş´ÎËÉ¿ªÏû¶¶
+    case 7: // ç¬¬äºŒæ¬¡æ¾å¼€æ¶ˆæŠ–
         if (key_val == 1) {
         	key->count++;
             if (key->count >= key->debounce_ticks) {
@@ -261,13 +261,13 @@ void Key_Status(Key_t *key)
         }
         break;
 
-    case 8: // ×îÖÕ¿ÕÏĞ
+    case 8: // æœ€ç»ˆç©ºé—²
         key->flag = 0;
         key->count = 0;
         key->state = 0;
         break;
 
-    case 9: // ³¤°´³ÖĞøÖĞ
+    case 9: // é•¿æŒ‰æŒç»­ä¸­
         if (key_val == 1) {
             key->flag = 0;
             key->count = 0;
@@ -292,7 +292,7 @@ void Key_Status(Key_t *key)
 
 
 
-    // ¸üĞÂ press ×´Ì¬
+    // æ›´æ–° press çŠ¶æ€
     if (key->flag==1 || key->flag==2 || key->flag==5 || key->flag==6 || key->state==3 || key->state==2){
         key->press = 1;
     } else {
