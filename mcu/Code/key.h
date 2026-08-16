@@ -3,25 +3,25 @@
 
 #include "stm32f10x.h"
 #include <stdio.h>
-// === °´¼ü½á¹¹Ìå ===
+// === æŒ‰é”®ç»“æ„ä½“ ===
 typedef struct {
-    // === ÅäÖÃ²ÎÊı ===
-    uint8_t debounce_ticks;      // Ïû¶¶Ê±¼ä
-    uint8_t long_press_ticks;    // ³¤°´ÅĞ¶¨Ê±¼ä
-    uint8_t double_wait_ticks;   // Ë«»÷×î´ó¼ä¸ô
-    uint8_t long_tick_interval;  // ³¤°´»Øµ÷µ÷ÓÃ¼ä¸ô
+    // === é…ç½®å‚æ•° ===
+    uint8_t debounce_ticks;      // æ¶ˆæŠ–æ—¶é—´
+    uint8_t long_press_ticks;    // é•¿æŒ‰åˆ¤å®šæ—¶é—´
+    uint8_t double_wait_ticks;   // åŒå‡»æœ€å¤§é—´éš”
+    uint8_t long_tick_interval;  // é•¿æŒ‰å›è°ƒè°ƒç”¨é—´éš”
 
-    // === ×´Ì¬±äÁ¿ ===
-    uint8_t flag;       // ×´Ì¬»ú±êÖ¾
-    uint8_t state;      // Âß¼­×´Ì¬: 0¿ÕÏĞ 1µ¥»÷ 2Ë«»÷ 3³¤°´
-    uint8_t count;      // Í¨ÓÃ¼ÆÊıÆ÷
-    uint8_t press;      // ÊÇ·ñ°´ÏÂ(0ËÉ¿ª,1°´ÏÂ)
-    uint8_t long_tick;  // ³¤°´½ÚÁ÷¼ÆÊı
+    // === çŠ¶æ€å˜é‡ ===
+    uint8_t flag;       // çŠ¶æ€æœºæ ‡å¿—
+    uint8_t state;      // é€»è¾‘çŠ¶æ€: 0ç©ºé—² 1å•å‡» 2åŒå‡» 3é•¿æŒ‰
+    uint8_t count;      // é€šç”¨è®¡æ•°å™¨
+    uint8_t press;      // æ˜¯å¦æŒ‰ä¸‹(0æ¾å¼€,1æŒ‰ä¸‹)
+    uint8_t long_tick;  // é•¿æŒ‰èŠ‚æµè®¡æ•°
 
-    // === °´¼ü±àºÅ ===
-    uint8_t id;         // 1,2,3... ´ú±í²»Í¬µÄ°´¼ü
+    // === æŒ‰é”®ç¼–å· ===
+    uint8_t id;         // 1,2,3... ä»£è¡¨ä¸åŒçš„æŒ‰é”®
 
-    // === »Øµ÷º¯Êı ===
+    // === å›è°ƒå‡½æ•° ===
     void (*single_callback)(void);
     void (*double_callback)(void);
     void (*long_callback)(void);

@@ -58,7 +58,7 @@ SimpleRemote/
 │  ├─ README.md              脚本用途和运行环境说明
 │  └─ mechanical/            SolidWorks C# 与 STEP 分析脚本
 ├─ hardware/
-│  ├─ electronics/           嘉立创 EDA 工程、PCB 网表和硬件分析
+│  ├─ electronics/           嘉立创 EDA 工程、原理图 PDF、PCB 网表和硬件分析
 │  └─ mechanical/            遥控器机械结构和装配模型
 └─ mcu/                      STM32 固件工程
    ├─ Code/                  按键、OLED、I2C、ADC、NRF24 等功能模块
@@ -82,12 +82,15 @@ SimpleRemote/
 
 ## 开发与编译
 
-- IDE：Keil MDK-ARM / μVision 5。
-- 编译器：ARM Compiler 5。
-- 工程入口：`mcu/stm32f103c8t6.uvprojx`。
+- IDE：Keil MDK-ARM / μVision 5（本机路径 `D:\SoftWare\stm32Keil`，μVision V5.38）。
+- 编译器：ARM Compiler 5（V5.06 update 7）。
+- 工程入口：`mcu/stm32f103c8t6.uvprojx`，输出名为 `stm32f103c8t6`。
 - 固件入口：`mcu/User/main.c`。
 - Keil 生成的 `Objects/`、`Listings/`、`DebugConfig/` 和用户界面配置不纳入 Git。
+- 源码编码已统一为 UTF-8（无 BOM），含中文注释的 .c/.h 均为 UTF-8，可直接用现代编辑器打开。
+
+最近一次完整编译（2026-08-16，命令行 `UV4 -b`）：**0 Error(s), 0 Warning(s)**。链接结果：ROM 25.07 kB / 32 kB（约 78%），RAM 3.80 kB / 10 kB（约 38%）。产物为 `mcu/Objects/stm32f103c8t6.axf` 与 `stm32f103c8t6.hex`。
 
 工程由其他位置迁移而来。首次打开 Keil 工程时，应核对目标芯片、Pack 版本、ST-Link 下载配置以及实际硬件接线。
 
-电子设计源文件位于 `hardware/electronics/`。其中包含 2026-08-10 导出的最新 EPRO 工程、PCB 网表以及电源结构、器件和 MCU 引脚对应分析。
+电子设计源文件位于 `hardware/electronics/`。当前为 2026-08-15 导出的最新版本：`ReuseBlock_遥控器1.0_2026-08-15.epro`（嘉立创 EDA 工程）、`SCH_Schematic1_2026-08-15.pdf`（原理图）和 `遥控器1.0网表.tel`（PCB 网表，实测 86 个元件位号、70 个网络），电源结构、器件和 MCU 引脚对应的详细分析见该目录 README。

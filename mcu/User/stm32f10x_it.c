@@ -47,24 +47,24 @@ void TIM2_IRQHandler(void)
     if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET)
     {
         TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
-		Key_Mange();//°´¼üµÄ×´Ì¬¼ì²â
+		Key_Mange();//æŒ‰é”®çš„çŠ¶æ€æ£€æµ‹
 
     }
 }
 
 extern uint8_t i2c_dma_tx_done;
 
-// DMA1_Channel6 Îª I2C1_TX µÄ DMA Í¨µÀ
+// DMA1_Channel6 ä¸º I2C1_TX çš„ DMA é€šé“
 void DMA1_Channel6_IRQHandler(void)
 {
-    if (DMA_GetITStatus(DMA1_IT_TC6)) // ´«ÊäÍê³ÉÖĞ¶Ï
+    if (DMA_GetITStatus(DMA1_IT_TC6)) // ä¼ è¾“å®Œæˆä¸­æ–­
     {
-        DMA_ClearITPendingBit(DMA1_IT_TC6);    // ÇåÖĞ¶Ï±êÖ¾
-        DMA_Cmd(DMA1_Channel6, DISABLE);       // ¹Ø±ÕDMAÍ¨µÀ
-        I2C_DMACmd(I2C1, DISABLE);             // ¹Ø±ÕI2C DMAÇëÇó
+        DMA_ClearITPendingBit(DMA1_IT_TC6);    // æ¸…ä¸­æ–­æ ‡å¿—
+        DMA_Cmd(DMA1_Channel6, DISABLE);       // å…³é—­DMAé€šé“
+        I2C_DMACmd(I2C1, DISABLE);             // å…³é—­I2C DMAè¯·æ±‚
 
-        I2C_GenerateSTOP(I2C1, ENABLE);        // ·¢ËÍÍ£Ö¹ĞÅºÅ
-        i2c_dma_tx_done = 1;                    // ±ê¼ÇÍê³É
+        I2C_GenerateSTOP(I2C1, ENABLE);        // å‘é€åœæ­¢ä¿¡å·
+        i2c_dma_tx_done = 1;                    // æ ‡è®°å®Œæˆ
     }
 }
 /**
