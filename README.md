@@ -91,6 +91,7 @@ flowchart TB
 ```text
 SimpleRemote/
 ├─ README.md                 工程说明
+├─ Git提交规范.md            约定式提交及中文提交描述规范
 ├─ scripts/                  设计与校核过程中使用的自动化脚本源码
 │  ├─ README.md              脚本用途和运行环境说明
 │  └─ mechanical/            SolidWorks C# 与 STEP 分析脚本
@@ -127,6 +128,7 @@ SimpleRemote/
 - 固件入口：`mcu/User/main.c`。
 - Keil 生成的 `Objects/`、`Listings/`、`DebugConfig/` 和用户界面配置不纳入 Git。
 - 源码编码已统一为 UTF-8（无 BOM），含中文注释的 .c/.h 均为 UTF-8，可直接用现代编辑器打开。
+- 所有新提交必须遵守根目录 `Git提交规范.md`，使用约定式提交格式和中文描述。
 
 最近一次完整编译（2026-08-16，命令行 `UV4 -b`）：**0 Error(s), 0 Warning(s)**。链接结果：ROM 25.07 kB / 32 kB（约 78%），RAM 3.80 kB / 10 kB（约 38%）。产物为 `mcu/Objects/stm32f103c8t6.axf` 与 `stm32f103c8t6.hex`。
 
