@@ -34,6 +34,10 @@ internal static class SwInspector
         while (feature != null && count < 500)
         {
             Console.WriteLine(string.Format("feature={0}|{1}|{2}", count, feature.Name, feature.GetTypeName2()));
+            bool isWarning = false;
+            int featureError = feature.GetErrorCode2(out isWarning);
+            if (featureError != 0)
+                Console.WriteLine("featureIssue=" + feature.Name + "|code=" + featureError + "|warning=" + isWarning);
             if (feature.GetTypeName2() == "ProfileFeature")
                 PrintSketch(feature);
             else if (feature.GetTypeName2() == "Extrusion")
@@ -129,9 +133,19 @@ internal static class SwInspector
             for (int i = 0; i < bodies.Length; i++)
             {
                 Body2 body = (Body2)bodies[i];
+                Console.WriteLine("bodyCheck=" + body.Check2());
                 PrintBox("body" + i + "Box", (double[])body.GetBodyBox());
                 object[] faces = (object[])body.GetFaces();
                 Console.WriteLine(string.Format("body={0}|{1}|faces={2}", i, body.Name, faces == null ? 0 : faces.Length));
+                if (faces != null)
+                    foreach (Face2 face in faces)
+                    {
+                        Surface surface = (Surface)face.GetSurface();
+                        if (!surface.IsPlane()) continue;
+                        double[] plane = (double[])surface.PlaneParams;
+                        if (Math.Abs(plane[2]) > 0.999)
+                            Console.WriteLine("zPlane_mm=" + Mm(plane[5]) + "|area_mm2=" + (face.GetArea() * 1e6).ToString("0.###", CultureInfo.InvariantCulture));
+                    }
             }
         }
     }

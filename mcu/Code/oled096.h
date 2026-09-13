@@ -6,7 +6,7 @@
 #include <stdio.h>  // 用于 sprintf
 #include <math.h>  // 需要包含math.h用于sin、cos
 extern const uint8_t ASCII816[95][16];
-void OLED_Init(void);
+uint8_t OLED_Init(void); /* 返回IIC_Status，初始化异常可由主循环重试 */
 
 void OLED_WriteByte(uint8_t byte, uint8_t cmd);
 void OLED_SetPos(uint8_t x, uint8_t y);

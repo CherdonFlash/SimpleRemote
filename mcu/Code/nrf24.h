@@ -58,6 +58,20 @@ uint8_t SPI1_ReadWriteByte(uint8_t TxData);
 void nrf24_TX_init(void);
 uint8_t nrf24_send(uint8_t *Buf);
 void NRF_SendAll(void);
+/* 运行统计供ST-Link读取，不额外打印、不改变无线包。attempts不含芯片自动重发。 */
+typedef struct {
+    uint32_t attempts;
+    uint32_t acked;
+    uint32_t max_retries;
+    uint32_t errors;
+    uint32_t last_start_ms;
+    uint32_t min_interval_ms;
+    uint32_t max_interval_ms;
+    uint32_t last_result;
+    uint32_t rf_channel;
+    uint32_t rf_setup;
+} NRF_Diagnostics;
+extern volatile NRF_Diagnostics g_nrf_diag;
 uint8_t nrf24_get(uint8_t *Buf);
 uint8_t NRF_Write_Cmd(uint8_t cmd);
 #endif

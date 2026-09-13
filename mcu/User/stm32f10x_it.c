@@ -52,20 +52,12 @@ void TIM2_IRQHandler(void)
     }
 }
 
-extern uint8_t i2c_dma_tx_done;
 
 // DMA1_Channel6 为 I2C1_TX 的 DMA 通道
 void DMA1_Channel6_IRQHandler(void)
 {
-    if (DMA_GetITStatus(DMA1_IT_TC6)) // 传输完成中断
-    {
-        DMA_ClearITPendingBit(DMA1_IT_TC6);    // 清中断标志
-        DMA_Cmd(DMA1_Channel6, DISABLE);       // 关闭DMA通道
-        I2C_DMACmd(I2C1, DISABLE);             // 关闭I2C DMA请求
-
-        I2C_GenerateSTOP(I2C1, ENABLE);        // 发送停止信号
-        i2c_dma_tx_done = 1;                    // 标记完成
-    }
+    /* 驱动记录DMA完成/错误，主循环等待BTF后发送STOP，不在中断中阻塞。 */
+    I2C1_DMA_IRQHandler();
 }
 /**
   * @brief  This function handles NMI exception.

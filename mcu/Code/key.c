@@ -2,7 +2,7 @@
 //------开源作者EzWalk  qq:1228879785-----------
 //------本文件日期2025/9/29 版本1.0-------------
 //你有几个按键就全局几个结构体对象 并且修改函数Key_Init_All ,Key_GPIO_Init ,Key_Mange,Key_Read , Key_GetState里面的内容调整到自己的情况
-//最后把Key_Mange函数 放入中断函数中  外部只需要调用一次Key_Init_All 进行初始化 然后就可以通过Key_GetState(x)进行获得按键的逻辑状态 
+//Key_Mange放入10ms中断；遥控使用Key_IsPressed，事件使用Key_TakeEvents消费缓存。
 //根据需求可以选择在回调函数里面放入你自己要执行的回调函数,单击和双击只会执行一次,长按触发后会一直执行 执行间隔和次数根据长按回调调用间隔决定
 //注意双击的时候 前一个逻辑状态一定是单击的逻辑状态  因此如果你想做一些比较精细的逻辑 请使用回调函数
 Key_t IO1;
@@ -56,17 +56,14 @@ void TIM2_Init_10ms(void)
     TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
 
     /*
-     * 假设 APB1 时钟 = 36MHz
-     * 为产生 10ms 中断，需要定时器溢出周期为 10ms = 10000us
-     * 可设置：
-     *    预分频器 Prescaler = 7199  （即 36MHz / (7199 + 1) = 5kHz）
-     *    自动重装载 ARR = 49         （即 50个计数 = 10ms）
-     *    10ms = (ARR+1) * (PSC+1) / 36MHz
+     * 当前 APB1=36MHz、分频为2，TIM2 内核时钟倍频为72MHz。
+     * 72MHz / 7200 / 100 = 100Hz，即每10ms扫描一次。
+     * 长按50次=500ms，双击窗口40次=400ms。
      */
 
     TIM_TimeBaseStructure.TIM_Prescaler = 7200-1;             // 分频系数
     TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up; // 向上计数
-    TIM_TimeBaseStructure.TIM_Period = 50-1;                  // 自动重装载值
+    TIM_TimeBaseStructure.TIM_Period = 100-1;                 // 10ms周期
     TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1; // 时钟分频
     TIM_TimeBaseStructure.TIM_RepetitionCounter = 0;        // 重复计数器（仅高级定时器）
     TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure);
@@ -110,6 +107,38 @@ uint8_t Key_GetState(uint8_t id)
         default: return 0;  // 不存在的按键
     }
 }
+static Key_t *Key_Find(uint8_t id)
+{
+    switch (id) {
+        case 1: return &IO1;
+        case 2: return &IO2;
+        case 3: return &IO3;
+        case 4: return &IO4;
+        default: return NULL;
+    }
+}
+
+uint8_t Key_IsPressed(uint8_t id)
+{
+    Key_t *key = Key_Find(id);
+    return key != NULL ? key->press : 0;
+}
+
+uint8_t Key_TakeEvents(uint8_t id)
+{
+    Key_t *key = Key_Find(id);
+    uint8_t events;
+    uint32_t primask;
+    if (key == NULL) return 0;
+    /* 读后清零须原子化，避免恰好被 TIM2 新事件覆盖。 */
+    primask = __get_PRIMASK();
+    __disable_irq();
+    events = key->events;
+    key->events = 0;
+    __set_PRIMASK(primask);
+    return events;
+}
+
 //按键结构体对象初始化函数
 void Key_Init(Key_t *key, uint8_t id,
               uint8_t debounce, uint8_t long_press, uint8_t double_wait, uint8_t long_interval,
@@ -126,6 +155,9 @@ void Key_Init(Key_t *key, uint8_t id,
     key->state = 0;
     key->count = 0;
     key->press = 0;
+    key->events = 0;
+    key->candidate = 0;
+    key->debounce_count = 0;
     key->long_tick = 0;
 
     // 编号
@@ -141,6 +173,17 @@ void Key_Init(Key_t *key, uint8_t id,
 void Key_Status(Key_t *key)
 {
     uint8_t key_val = Key_Read(key->id);  // 0=按下, 1=松开
+    uint8_t pressed = (key_val == 0);
+
+    /* 按下和松开都经过相同消抖，不依赖单击/双击状态机。 */
+    if (pressed != key->candidate) {
+        key->candidate = pressed;
+        key->debounce_count = 0;
+    } else if (key->press != pressed) {
+        if (key->debounce_count < 255U) ++key->debounce_count;
+        if (key->debounce_count >= key->debounce_ticks)
+            key->press = pressed;
+    }
 
     switch (key->flag)
     {
@@ -172,7 +215,6 @@ void Key_Status(Key_t *key)
                 key->flag = 3;
                 key->count = 0;
                 key->state = 1;
-                if (key->single_callback) key->single_callback();
             } else {
                 key->flag = 8;
                 key->state = 0;
@@ -180,6 +222,7 @@ void Key_Status(Key_t *key)
         } else if (key->count >= key->long_press_ticks) {
             key->flag = 9;
             key->state = 3;
+            key->events |= KEY_EVENT_LONG;
         } else {
         	key->state = 0;
         }
@@ -192,6 +235,8 @@ void Key_Status(Key_t *key)
                 key->flag = 4;
                 key->count = 0;
                 key->state = 1;
+                key->events |= KEY_EVENT_SINGLE;
+                if (key->single_callback) key->single_callback();
             }
         } else {
             key->flag = 2;
@@ -241,6 +286,7 @@ void Key_Status(Key_t *key)
         } else if (key->count >= key->long_press_ticks) {
             key->flag = 9;
             key->state = 3;
+            key->events |= KEY_EVENT_LONG;
             key->count = 0;
         }else {
         	key->state = 0;
@@ -253,6 +299,7 @@ void Key_Status(Key_t *key)
             if (key->count >= key->debounce_ticks) {
                 key->flag = 8;
                 key->state = 2;
+                key->events |= KEY_EVENT_DOUBLE;
                 if (key->double_callback) key->double_callback();
             }
         } else {
@@ -292,11 +339,6 @@ void Key_Status(Key_t *key)
 
 
 
-    // 更新 press 状态
-    if (key->flag==1 || key->flag==2 || key->flag==5 || key->flag==6 || key->state==3 || key->state==2){
-        key->press = 1;
-    } else {
-        key->press = 0;
-    }
+    /* press 已由入口处的独立消抖更新；不能由事件状态反推物理按住状态。 */
 }
 

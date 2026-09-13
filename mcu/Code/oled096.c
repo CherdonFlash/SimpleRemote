@@ -11,28 +11,20 @@ uint8_t OLED_GRAM[8][128]; // 8页 × 128列，页寻址
 
 //简单解释 oled 0.96寸的通信 一般只有两个寄存器地址一个是0x00 一个是0x40
 //只需要往前者这个地址写一个字节的数据 oled就会接受这个数据然后执行操作 每次写一次就执行一次 所以是每个值代表一个操作 
-void OLED_Init(void)
+uint8_t OLED_Init(void)
 {
-	OLED_WriteByte(0xAE, 1); // 关闭显示
-    OLED_WriteByte(0x20, 1); OLED_WriteByte(0x00, 1); // 设置内存寻址模式为“水平寻址模式”。
-    OLED_WriteByte(0xB0, 1);//设置页起始地址为0（第0页）。
-    OLED_WriteByte(0xC8, 1);//设置COM扫描方向为从COM[N-1]到COM0，垂直翻转显示。
-    OLED_WriteByte(0x00, 1);//设置列起始地址低4位为0。
-    OLED_WriteByte(0x10, 1);//设置列起始地址高4位为0。
-    OLED_WriteByte(0x40, 1);//设置显示起始行地址为0。
-    OLED_WriteByte(0x81, 1); OLED_WriteByte(0x7F, 1);//设置对比度为0x7F（中等亮度）。
-    OLED_WriteByte(0xA1, 1);//段重映射，左右镜像。
-    OLED_WriteByte(0xA6, 1);//正常显示模式。
-    OLED_WriteByte(0xA8, 1); OLED_WriteByte(0x3F, 1);//MUX比率设置为63（对应64行）。
-    OLED_WriteByte(0xA4, 1);//	按显存显示（正常）
-    OLED_WriteByte(0xD3, 1); OLED_WriteByte(0x00, 1);//显示偏移设置为0。
-    OLED_WriteByte(0xD5, 1); OLED_WriteByte(0x80, 1);//设置时钟分频为默认值。
-    OLED_WriteByte(0xD9, 1); OLED_WriteByte(0xF1, 1);//预充电周期设置。
-    OLED_WriteByte(0xDA, 1); OLED_WriteByte(0x12, 1);//COM引脚硬件配置
-    OLED_WriteByte(0xDB, 1); OLED_WriteByte(0x40, 1);//VCOMH电压设置。
-    OLED_WriteByte(0x8D, 1); OLED_WriteByte(0x14, 1);//开启电荷泵
-    OLED_WriteByte(0xAF, 1); // 打开显示
-
+    /* 与原初始化配置一致；0x00控制字允许连续命令，任一步异常立即返回。 */
+    static const uint8_t commands[] = {
+        0xAE,             /* 关闭显示 */
+        0x20, 0x00,       /* 水平寻址 */
+        0xB0, 0xC8, 0x00, 0x10, 0x40,
+        0x81, 0x7F,       /* 对比度保持不变 */
+        0xA1, 0xA6, 0xA8, 0x3F, 0xA4,
+        0xD3, 0x00, 0xD5, 0x80, 0xD9, 0xF1,
+        0xDA, 0x12, 0xDB, 0x40, 0x8D, 0x14,
+        0xAF              /* 打开显示 */
+    };
+    return (uint8_t)IIC_WriteMulti(OLED_ADDR, 0x00, commands, sizeof(commands));
 }
 
 //往oled一个寄存器写一个字节指令/数据

@@ -6,6 +6,8 @@ mcu/*.uvguix.*
 
 # Mechanical preview images and generated script binaries
 hardware/mechanical/*.png
+!hardware/mechanical/产品装配*.png
+hardware/mechanical/backup_*/
 scripts/**/*.exe
 scripts/**/*.dll
 scripts/**/*.pdb

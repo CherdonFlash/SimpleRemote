@@ -2,6 +2,12 @@
 #include "key.h"
 #include "turn.h"
 #include "bat.h"
+
+/* 逐包日志会占用大量115200波特率串口时间；正式运行默认关闭。
+ * 调试时改为1即可恢复完整32字节发送日志。 */
+#ifndef NRF_PACKET_LOG_ENABLE
+#define NRF_PACKET_LOG_ENABLE 0
+#endif
 #define CS_Set(x) (x ? GPIO_SetBits(GPIOB, GPIO_Pin_9) : GPIO_ResetBits(GPIOB, GPIO_Pin_9)) //拉低开始通信
 #define CE_Set(x) (x ? GPIO_SetBits(GPIOB, GPIO_Pin_8) : GPIO_ResetBits(GPIOB, GPIO_Pin_8)) //收发引脚  
 #define IRQ_Read() GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_15)
@@ -14,6 +20,7 @@
 uint8_t Buf[32]={0};//数据包
 uint8_t head = 0x51;//帧头
 uint8_t end = 0x15;//帧尾
+volatile NRF_Diagnostics g_nrf_diag = {0};
 //摇杆数据
 extern int8_t mobile_1;
 extern int8_t mobile_2;
@@ -21,6 +28,18 @@ extern int8_t mobile_3;
 extern int8_t mobile_4;//油门0-255
 extern float V_Bat;//电池电压 实际值
 void NRF_SendAll(){
+    uint32_t now = GetTick();
+    uint8_t result;
+    /* 测量相邻业务包发起间隔，包含上一轮串口输出和显示等主循环开销。 */
+    if (g_nrf_diag.attempts != 0) {
+        uint32_t interval = now - g_nrf_diag.last_start_ms;
+        if (g_nrf_diag.attempts == 1 || interval < g_nrf_diag.min_interval_ms)
+            g_nrf_diag.min_interval_ms = interval;
+        if (interval > g_nrf_diag.max_interval_ms)
+            g_nrf_diag.max_interval_ms = interval;
+    }
+    g_nrf_diag.last_start_ms = now;
+    ++g_nrf_diag.attempts;
     Buf[0] = head;
 
     Buf[1] = mobile_1;//摇杆
@@ -28,10 +47,11 @@ void NRF_SendAll(){
     Buf[3] = mobile_3;
     Buf[4] = mobile_4;
     
-    uint8_t io1=(Key_GetState(1) !=0);
-    uint8_t io2=(Key_GetState(2) !=0);
-    uint8_t io3=(Key_GetState(3) !=0);
-    uint8_t io4=(Key_GetState(4) !=0);
+    /* 遥控位表示消抖后的按住状态，不再混用单击/双击事件。 */
+    uint8_t io1=Key_IsPressed(1);
+    uint8_t io2=Key_IsPressed(2);
+    uint8_t io3=Key_IsPressed(3);
+    uint8_t io4=Key_IsPressed(4);
     
     Buf[5] = (io1 << 0) |(io2 << 1) |(io3 << 2) |(io4 << 3);//低四位依次是四个按键的电平状态
     
@@ -45,15 +65,21 @@ void NRF_SendAll(){
 
 
     
-    nrf24_send(Buf);//发送数据包
+    result = nrf24_send(Buf);
+    g_nrf_diag.last_result = result;
+    if (result == TX_OK) ++g_nrf_diag.acked;
+    else if (result == MAX_TX) ++g_nrf_diag.max_retries;
+    else ++g_nrf_diag.errors;
     
-    // 打印整个数据包
+#if NRF_PACKET_LOG_ENABLE
+    // 调试模式下打印整个数据包；关闭时不阻塞主循环。
     UART1_Printf("Send Buf: ");
     for(int i = 0; i < 32; i++)
     {
         UART1_Printf("%d,", Buf[i]);
     }
     UART1_Printf("\r\n");
+#endif
 }
 //设置发送的地址和接受的地址
 const uint8_t TX_ADDRESS[TX_ADR_WIDTH]={0x1F, 0xFF, 0xFF, 0xFF, 0x1F}; 
@@ -63,6 +89,9 @@ void nrf24_init(void){
     nrf24_gpio();
     while(!nrf24_check());//自检死循环
     nrf24_TX_init();
+    /* 启动时读回实际射频配置；不增加每包SPI流量。 */
+    g_nrf_diag.rf_channel = NRF_Read_Reg(RF_CH);
+    g_nrf_diag.rf_setup = NRF_Read_Reg(RF_SETUP);
     
 }
 
@@ -249,7 +278,7 @@ void nrf24_gpio(){
     SPI_InitStructure.SPI_CPHA = SPI_CPHA_1Edge;
     SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;
 
-    SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_64;  // 建议 4.5MHz
+    SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_8; // APB2 72MHz / 8 = 9MHz
     SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;
     SPI_InitStructure.SPI_CRCPolynomial = 7;
 
